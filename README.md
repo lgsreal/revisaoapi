@@ -1,6 +1,13 @@
 # revisaoapi
 
 Projeto de revisão de API para os alunos do 2TDSPM da FIAP
+
+INTEGRATES:
+
+1. Clara Cerqueira - RM98175
+2. Pedro Batista - RM550334
+3. Rafaela Rodrigues - RM551857
+ 
 ## Tecnologias
 
  - [Java 17](https://docs.oracle.com/en/java/javase/17/)
