@@ -1,5 +1,6 @@
 package br.com.fiap.revisaoapi.service;
 
+import br.com.fiap.revisaoapi.controller.ProdutoController;
 import br.com.fiap.revisaoapi.dto.ProdutoDTO;
 import br.com.fiap.revisaoapi.model.Produto;
 import br.com.fiap.revisaoapi.repository.ProdutoRepository;
@@ -8,9 +9,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class ProdutoService {
@@ -23,11 +28,11 @@ public class ProdutoService {
     }
 
     public Page<ProdutoDTO> buscarProdutos() {
-        return produtoRepository.findAll(paginacaoPersonalizada).map(this::toDTO);
+        return produtoRepository.findAll(paginacaoPersonalizada).map(produto -> toDTO(produto, true));
     }
 
     public ProdutoDTO buscarProdutoPorId(Long id) {
-        return produtoRepository.findById(id).map(this::toDTO).orElse(null);
+        return produtoRepository.findById(id).map(produto -> toDTO(produto, false)).orElse(null);
     }
 
     public Produto salvarProduto(Produto produto){
@@ -52,12 +57,19 @@ public class ProdutoService {
         produtoOptional.ifPresent(produtoRepository::delete);
     }
 
-    private ProdutoDTO toDTO(Produto produto) {
+    private ProdutoDTO toDTO(Produto produto, boolean self) {
+        Link link;
+        if (self) {
+            link = linkTo(methodOn(ProdutoController.class).buscarProdutoPorId(produto.getId())).withSelfRel();
+        } else {
+            link = linkTo(methodOn(ProdutoController.class).buscarProdutos()).withRel("Lista de Produtos");
+        }
         return new ProdutoDTO(
                 produto.getId(),
                 produto.getNome(),
                 produto.getDescricao(),
-                produto.getDimensoes()
+                produto.getDimensoes(),
+                link
         );
     }
 
