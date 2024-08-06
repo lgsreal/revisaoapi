@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,6 +24,10 @@ public class ClienteService {
 
     public Page<ClienteDTO> findAll() {
         return clienteRepository.findAll(customPageable).map(this::toDTO);
+    }
+
+    public List<Cliente> findAllView() {
+        return clienteRepository.findAll();
     }
 
     public ClienteDTO findById(Long id) {
